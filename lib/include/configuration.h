@@ -1,6 +1,6 @@
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
-
+#include <Arduino.h>
 
 //************************
 // initialisation EEPROM *
@@ -13,6 +13,7 @@
 // Time constants
 
 #define LED_MATRIX_TIMESTEP 2e-4   // Execution step time in s
+#define IP_DISPLAY_TIMESTEP 3e-3    // Execution step time in s
 #define DEFAULT_PATTERN_TIMESTEP 100e-3    // Execution step time in s
 
 
@@ -22,6 +23,15 @@ const byte DISP[4][8] = {{1, 128, 16, 4, 2, 64, 32, 8},
                          {1, 128, 32, 8, 4, 2, 64, 16},
                          {1, 128, 16, 4, 2, 64, 32, 8},		
                          {1, 128, 32, 8, 4, 2, 64, 16}};
+
+#define SEG_A  (1 << 7)
+#define SEG_B  (1 << 6)
+#define SEG_C  (1 << 5)
+#define SEG_D  (1 << 4)
+#define SEG_E  (1 << 3)
+#define SEG_F  (1 << 2)
+#define SEG_G  (1 << 1)
+#define SEG_DP (1 << 0)
 
 //***************************
 // LED Matrix Configuration *
@@ -48,14 +58,18 @@ const byte DISP[4][8] = {{1, 128, 16, 4, 2, 64, 32, 8},
 #define LATCH_MATRIX4	A5
 
 // shift register pins (IP)
-#define DATA_IP	    D5
-#define CLOCK_IP    D6
-#define LATCH_IP	D7
-#define AFF1_IP D2
-#define AFF2_IP D3
-#define AFF3_IP D4
+#define DATA_IP	    5
+#define CLOCK_IP    6
+#define LATCH_IP	7
+#define AFF1_IP 2
+#define AFF2_IP 3
+#define AFF3_IP 4
 
 // general configuration
+
+// IP_display constants
+#define IP_DISPLAY_BUFFER_SIZE 25   // Size of the data buffer receiver
+#define DISP_NUMBER 3               // Number of 7 seg common pin
 
 #define ROTATION_MATRIX_1 0
 #define ROTATION_MATRIX_2 270
@@ -67,10 +81,6 @@ enum {SLIDE_MODE,ANIMATION_MODE,RIGHT_ROTATION_MODE,LEFT_ROTATION_MODE,UPSIDEDOW
 const unsigned int rows[] = {4, 16384, 8, 32768, 128, 1, 512, 16}; //Row1,Row2,...,Row8
 const unsigned int cols[] = {256, 2048, 64, 2, 32, 4096, 8192, 1024}; //Col1,Col2,...,Col8
 
-/*
-const unsigned int rows[] = {4, 16384, 8, 32768, 128, 1, 512, 16}; //Row1,Row2,...,Row8
-const unsigned int cols[] = {256, 2048, 64, 2, 32, 4096, 8192, 1024}; //Col1,Col2,...,Col8
-*/
 
 
 #endif

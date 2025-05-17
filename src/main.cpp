@@ -1,7 +1,9 @@
 #include <Arduino.h>
+#include <time.h>
+
 #include "configuration.h"
 #include "ledMatrix.h"
-
+#include "IPDisplay.h"
 
 
 // Variables
@@ -12,7 +14,10 @@ LedMatrix ledmatrix4;
 
 LedMatrix* banner[4] = {&ledmatrix3, &ledmatrix2, &ledmatrix1, &ledmatrix4};
 
-char test[16] = "BZH";
+Ipdisplay ipdisplay;
+
+
+char test[NB_PATTERNS_MAX] = "Club Robot INSA  ";
 char **anim = ledmatrix1.stringToPatterns(test);
 
 int frame1[8]= {
@@ -39,9 +44,19 @@ int frame2[8]= {
 
 int *anim32Bit[2] = {frame1, frame2};
 
+char zero = (char) 0b11111100;
+
+char buffer[12] = {zero,zero,zero,zero,zero,zero,zero,zero,zero,zero,zero,zero};
+
 //TODO: EMOJI and lowercase letter
 void setup(){
 	// Variables initialisation
+	ipdisplay.attach(DATA_IP, CLOCK_IP, LATCH_IP);
+	ipdisplay.setTimestep(IP_DISPLAY_TIMESTEP);
+	ipdisplay.enable();
+
+	ipdisplay.displayString("club robot");
+
 
 	ledmatrix1.attach(DATA_MATRIX1,CLOCK_MATRIX1,LATCH_MATRIX1,ROTATION_MATRIX_2);
 	ledmatrix1.setTimestep(LED_MATRIX_TIMESTEP);
@@ -59,16 +74,17 @@ void setup(){
 	ledmatrix4.setTimestep(LED_MATRIX_TIMESTEP);
 	ledmatrix4.enable();
 
-	LedMatrix::displayBannerText(banner, test, STATIC_MODE);
+	LedMatrix::displayBannerText(banner, "INSA", STATIC_MODE);
 	LedMatrix::changeBannerPatternSpeed(banner,0.1);
 	//LedMatrix::computeBufferBanner(banner, anim32Bit, 2);
+
 }
 
 long LedUpdatePrevTime;
 long SwitchAnimPrevTime;
 long timeInABottle;
 
-char animCounter=0;
+bool animCounter=0;
 
 void loop(){
 
@@ -76,17 +92,13 @@ void loop(){
 	ledmatrix2.update();
 	ledmatrix3.update();
 	ledmatrix4.update();
+	ipdisplay.update();
 
-  
-  // if((timeInABottle-SwitchAnimPrevTime)>=3000){
-  //   SwitchAnimPrevTime = timeInABottle;
-  //
-  //   ledmatrix1.computeBuffer(*(Animation[animCounter]), sizeof(*(Animation[animCounter])));
-  //   ledmatrix2.computeBuffer(*(Animation[animCounter]), sizeof(*(Animation[animCounter])));
-  //   animCounter++;
-  //
-  //   if(animCounter>2){
-  //     animCounter=0;
-  //   }
-  // }
+
+  timeInABottle = millis();
+  if((timeInABottle-SwitchAnimPrevTime)>=1000){
+    SwitchAnimPrevTime = timeInABottle;
+  	ipdisplay.setDP(animCounter, 8);
+  	animCounter=!animCounter;
+  }
 }
