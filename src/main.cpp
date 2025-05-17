@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include "configuration.h"
 #include "ledMatrix.h"
-#include "utils.h"
 
 
 
@@ -11,43 +10,58 @@ LedMatrix ledmatrix2;
 LedMatrix ledmatrix3;
 LedMatrix ledmatrix4;
 
+LedMatrix* banner[4] = {&ledmatrix3, &ledmatrix2, &ledmatrix1, &ledmatrix4};
 
+char test[16] = "BZH";
+char **anim = ledmatrix1.stringToPatterns(test);
 
-char test[11] = "TEST      ";
-char **anim = stringToPatterns(test);
+int frame1[8]= {
+	(int) 0b01101100011011000110110001101100,
+	(int) 0b11111110111111101111111011111110,
+	(int) 0b11111110111111101111111011111110,
+	(int) 0b11111110111111101111111011111110,
+	(int) 0b01111100011111000111110001111100,
+	(int) 0b00111000001110000011100000111000,
+	(int) 0b00010000000100000001000000010000,
+	(int) 0b00000000000000000000000000000000,
+};
 
+int frame2[8]= {
+	(int) 0b0,
+	(int) 0b0,
+	(int) 0b0,
+	(int) 0b0,
+	(int) 0b0,
+	(int) 0b0,
+	(int) 0b0,
+	(int) 0b0,
+};
+
+int *anim32Bit[2] = {frame1, frame2};
+
+//TODO: EMOJI and lowercase letter
 void setup(){
 	// Variables initialisation
-
 
 	ledmatrix1.attach(DATA_MATRIX1,CLOCK_MATRIX1,LATCH_MATRIX1,ROTATION_MATRIX_2);
 	ledmatrix1.setTimestep(LED_MATRIX_TIMESTEP);
 	ledmatrix1.enable();
-	
-	ledmatrix1.computeBuffer(anim, 10, 3);
-	ledmatrix1.setMode(SLIDE_MODE);
 
 	ledmatrix2.attach(DATA_MATRIX2,CLOCK_MATRIX2,LATCH_MATRIX2,ROTATION_MATRIX_1);
 	ledmatrix2.setTimestep(LED_MATRIX_TIMESTEP);
 	ledmatrix2.enable();
 
-	ledmatrix2.computeBuffer(anim, 10, 2);
-	ledmatrix2.setMode(SLIDE_MODE);
-
 	ledmatrix3.attach(DATA_MATRIX3,CLOCK_MATRIX3,LATCH_MATRIX3,ROTATION_MATRIX_1);
 	ledmatrix3.setTimestep(LED_MATRIX_TIMESTEP);
 	ledmatrix3.enable();
-
-	ledmatrix3.computeBuffer(anim, 10, 1);
-	ledmatrix3.setMode(SLIDE_MODE);
 
 	ledmatrix4.attach(DATA_MATRIX4,CLOCK_MATRIX4,LATCH_MATRIX4,ROTATION_MATRIX_1);
 	ledmatrix4.setTimestep(LED_MATRIX_TIMESTEP);
 	ledmatrix4.enable();
 
-	ledmatrix4.computeBuffer(anim, 10, 4);
-	ledmatrix4.setMode(SLIDE_MODE);
-
+	LedMatrix::displayBannerText(banner, test, STATIC_MODE);
+	LedMatrix::changeBannerPatternSpeed(banner,0.1);
+	//LedMatrix::computeBufferBanner(banner, anim32Bit, 2);
 }
 
 long LedUpdatePrevTime;
