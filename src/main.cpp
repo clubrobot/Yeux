@@ -5,7 +5,6 @@
 #include "ledMatrix.h"
 #include "IPDisplay.h"
 
-
 // Variables
 LedMatrix ledmatrix1;
 LedMatrix ledmatrix2;
@@ -15,7 +14,6 @@ LedMatrix ledmatrix4;
 LedMatrix* banner[4] = {&ledmatrix3, &ledmatrix2, &ledmatrix1, &ledmatrix4};
 
 Ipdisplay ipdisplay;
-
 
 char test[NB_PATTERNS_MAX] = "Club Robot INSA  ";
 char **anim = ledmatrix1.stringToPatterns(test);
@@ -48,9 +46,14 @@ char zero = (char) 0b11111100;
 
 char buffer[12] = {zero,zero,zero,zero,zero,zero,zero,zero,zero,zero,zero,zero};
 
+
+
 //TODO: EMOJI and lowercase letter
 void setup(){
 	// Variables initialisation
+	Serial.begin(115200);
+
+	/*
 	ipdisplay.attach(DATA_IP, CLOCK_IP, LATCH_IP);
 	ipdisplay.setTimestep(IP_DISPLAY_TIMESTEP);
 	ipdisplay.enable();
@@ -76,6 +79,7 @@ void setup(){
 
 	LedMatrix::displayBannerText(banner, "INSA", STATIC_MODE);
 	LedMatrix::changeBannerPatternSpeed(banner,0.1);
+	*/
 	//LedMatrix::computeBufferBanner(banner, anim32Bit, 2);
 
 }
@@ -87,8 +91,28 @@ long timeInABottle;
 bool animCounter=0;
 
 void loop(){
+	if (Serial.available() > 0){
+		char c = Serial.read();
+		Serial.println("A");
+		if (c=='~'){	//Check start char
+			char mode = Serial.read();//Check if matrix or IP
+			byte size = Serial.read();
+			Serial.println("B");
+			if (mode=='M'){
+				Serial.println("C");
+				char displayMode = Serial.read(); //As in enum
+				char* string = (char*) malloc(sizeof(char)*size);
+				Serial.readBytesUntil('\0', string, size);
+				Serial.println(string);
+				//LedMatrix::displayBannerText(banner, string, SLIDE_MODE);
+				free(string);
+			}else if (mode=='I'){
 
-    ledmatrix1.update();
+			}
+		}
+		Serial.flush();
+	}
+    /*ledmatrix1.update();
 	ledmatrix2.update();
 	ledmatrix3.update();
 	ledmatrix4.update();
@@ -100,5 +124,5 @@ void loop(){
     SwitchAnimPrevTime = timeInABottle;
   	ipdisplay.setDP(animCounter, 8);
   	animCounter=!animCounter;
-  }
+  }*/
 }
