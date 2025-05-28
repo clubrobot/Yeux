@@ -121,7 +121,7 @@ void LedMatrix::displayBannerText(LedMatrix* banner[], char* str, byte mode, int
 	0b01101100 01101100 01101100 01101100
 		LED1	LED2      LED3	   LED4
  */
-void LedMatrix::computeBufferBanner(LedMatrix* banner[], int **buffer, int16_t sizeAnim, bool progmem, byte mode, int16_t bannerSize){
+void LedMatrix::computeBufferBanner(LedMatrix* banner[], uint32_t **buffer, int16_t sizeAnim, bool progmem, byte mode, int16_t bannerSize){
 	if (bannerSize > 4) return; //NO
 	byte starting_pos = 0;
 	for (int16_t matrixNum = 0; matrixNum < bannerSize; matrixNum++){
@@ -132,9 +132,9 @@ void LedMatrix::computeBufferBanner(LedMatrix* banner[], int **buffer, int16_t s
 			for (byte row = 0; row < 8; row++){
 				//Pour chaque ligne de chaque frame, on décale le bufferBanner pour avoir un buffer classique
 				if (progmem){
-					bufferMat[frame][row] = (char) ((pgm_read_dword(&(buffer[frame][row]))>>(8-matrixNum*8))&0xFF);
+					bufferMat[frame][row] = (char) (((pgm_read_dword(&(buffer[frame][row])))>>max(0,23-matrixNum*8))&0xFF);
 				}else{
-					bufferMat[frame][row] = (char) ((buffer[frame][row]>>(8-matrixNum*8))&0xFF);
+					bufferMat[frame][row] = (char) ((buffer[frame][row]>>max(0,23-matrixNum*8))&0xFF);
 				}
 
 			}

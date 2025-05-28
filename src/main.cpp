@@ -15,28 +15,7 @@ LedMatrix *banner[4] = {&ledmatrix2, &ledmatrix1, &ledmatrix4, &ledmatrix3};
 
 Ipdisplay ipdisplay;
 
-const int frame1[8] PROGMEM = {
-        (int) 0b01101100011011000110110001101100,
-        (int) 0b11111110111111101111111011111110,
-        (int) 0b11111110111111101111111011111110,
-        (int) 0b11111110111111101111111011111110,
-        (int) 0b01111100011111000111110001111100,
-        (int) 0b00111000001110000011100000111000,
-        (int) 0b00010000000100000001000000010000,
-        (int) 0b00000000000000000000000000000000,
-};
-const int frame2[8] PROGMEM = {
-        (int) 0,
-        (int) 0,
-        (int) 0,
-        (int) 0,
-        (int) 0,
-        (int) 0,
-        (int) 0,
-        (int) 0,
-};
 
-const int *anim32Bit[2] = {frame1, frame2};
 
 //TODO: EMOJI and lowercase letter
 void setup() {
@@ -69,7 +48,7 @@ void setup() {
     //LedMatrix::displayBannerText(banner, "AISPRID    ", SLIDE_MODE);
     LedMatrix::changeBannerPatternSpeed(banner, 0.5);
 
-    LedMatrix::computeBufferBanner(banner, (int **) anim32Bit, 2, true);
+    LedMatrix::computeBufferBanner(banner, (uint32_t **) animations::animationTwTCry, 9, true);
 
 }
 
@@ -106,35 +85,25 @@ void loop() {
             case 'A':
                 switch (BannerText.charAt(0)) {
                     case '0':
-                        LedMatrix::computeBufferBanner(banner, (int **) anim32Bit, 2, true);
+                        LedMatrix::computeBufferBanner(banner, (uint32_t **) animations::anim32Bit, 2, true);
                         break;
                     case '1':
-                        LedMatrix::computeBufferBanner((LedMatrix **) animations::animationEyes, (int **) anim32Bit, 4,
-                                                       true);
+                        LedMatrix::computeBufferBanner(banner,(uint32_t **) animations::animationEyes, 4, true);
                         break;
                     case '2':
-                        LedMatrix::computeBufferBanner((LedMatrix **) animations::animationUwU, (int **) anim32Bit, 4,
-                                                       true);
+                        LedMatrix::computeBufferBanner(banner, (uint32_t **) animations::animationUwU, 4, true);
                         break;
                     case '3':
-                        LedMatrix::computeBufferBanner((LedMatrix **) animations::animationTwTCry, (int **) anim32Bit,
-                                                       9,
-                                                       true);
+                        LedMatrix::computeBufferBanner(banner, (uint32_t **) animations::animationTwTCry, 9, true);
                         break;
                     case '4':
-                        LedMatrix::computeBufferBanner((LedMatrix **) animations::animationStarEyes, (int **) anim32Bit,
-                                                       8,
-                                                       true);
+                        LedMatrix::computeBufferBanner(banner, (uint32_t **) animations::animationStarEyes, 8, true);
                         break;
                     case '5':
-                        LedMatrix::computeBufferBanner((LedMatrix **) animations::tortueWalkRight, (int **) anim32Bit,
-                                                       4,
-                                                       true);
+                        LedMatrix::computeBufferBanner(banner, (uint32_t **) animations::tortueWalkRight, 4, true);
                         break;
                     case '6':
-                        LedMatrix::computeBufferBanner((LedMatrix **) animations::tortueWalkLeft, (int **) anim32Bit,
-                                                       4,
-                                                       true);
+                        LedMatrix::computeBufferBanner(banner, (uint32_t **) animations::tortueWalkLeft, 4, true);
                         break;
 
                 }
