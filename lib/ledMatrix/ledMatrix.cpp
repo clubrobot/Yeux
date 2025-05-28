@@ -43,8 +43,8 @@ char** LedMatrix::stringToPatterns(char *str){
 	uint16_t size = strlen(str);
 	char **ret = (char**)malloc(size * sizeof(char*));
 	for(uint16_t i = 0;i<size;i++){
-		switch (str[i]){
-		case ' ': ret[i] = (char*) SPACE; break;
+		switch (toLowerCase(str[i])){
+		case ' ': ret[i] = (char*)SPACE; break;
 		case '0': ret[i] = (char*)NUM_0; break;
 		case '1': ret[i] = (char*)NUM_1; break;
 		case '2': ret[i] = (char*)NUM_2; break;
@@ -55,58 +55,33 @@ char** LedMatrix::stringToPatterns(char *str){
 		case '7': ret[i] = (char*)NUM_7; break;
 		case '8': ret[i] = (char*)NUM_8; break;
 		case '9': ret[i] = (char*)NUM_9; break;
-		case 'a': ret[i]= (char*)A;break;
-		case 'A': ret[i]= (char*)A;break;
+		case 'a': ret[i] = (char*)A;break;
 		case 'b': ret[i] = (char*) B; break;
-		case 'B': ret[i] = (char*) B; break;
 		case 'c': ret[i] = (char*) C; break;
-		case 'C': ret[i] = (char*) C; break;
 		case 'd': ret[i] = (char*) D; break;
-		case 'D': ret[i] = (char*) D; break;
 		case 'e': ret[i] = (char*) E; break;
-		case 'E': ret[i] = (char*) E; break;
 		case 'f': ret[i] = (char*) F; break;
-		case 'F': ret[i] = (char*) F; break;
 		case 'g': ret[i] = (char*) G; break;
-		case 'G': ret[i] = (char*) G; break;
 		case 'h': ret[i] = (char*) H; break;
-		case 'H': ret[i] = (char*) H; break;
 		case 'i': ret[i] = (char*) I; break;
-		case 'I': ret[i] = (char*) I; break;
 		case 'j': ret[i] = (char*) J; break;
-		case 'J': ret[i] = (char*) J; break;
 		case 'k': ret[i] = (char*) K; break;
-		case 'K': ret[i] = (char*) K; break;
 		case 'l': ret[i] = (char*) L; break;
-		case 'L': ret[i] = (char*) L; break;
 		case 'm': ret[i] = (char*) M; break;
-		case 'M': ret[i] = (char*) M; break;
 		case 'n': ret[i] = (char*) N; break;
-		case 'N': ret[i] = (char*) N; break;
 		case 'o': ret[i] = (char*) O; break;
-		case 'O': ret[i] = (char*) O; break;
 		case 'p': ret[i] = (char*) P; break;
-		case 'P': ret[i] = (char*) P; break;
 		case 'q': ret[i] = (char*) Q; break;
-		case 'Q': ret[i] = (char*) Q; break;
 		case 'r': ret[i] = (char*) R; break;
-		case 'R': ret[i] = (char*) R; break;
 		case 's': ret[i] = (char*) S; break;
-		case 'S': ret[i] = (char*) S; break;
 		case 't': ret[i] = (char*) T; break;
-		case 'T': ret[i] = (char*) T; break;
 		case 'u': ret[i] = (char*) U; break;
-		case 'U': ret[i] = (char*) U; break;
 		case 'v': ret[i] = (char*) V; break;
-		case 'V': ret[i] = (char*) V; break;
 		case 'w': ret[i] = (char*) W; break;
-		case 'W': ret[i] = (char*) W; break;
 		case 'x': ret[i] = (char*) X; break;
-		case 'X': ret[i] = (char*) X; break;
 		case 'y': ret[i] = (char*) Y; break;
-		case 'Y': ret[i] = (char*) Y; break;
 		case 'z': ret[i] = (char*) Z; break;
-		case 'Z': ret[i] = (char*) Z; break;
+		default:(char*)SPACE; break;
 		}
 	}
 	return ret;
@@ -115,9 +90,9 @@ char** LedMatrix::stringToPatterns(char *str){
 void LedMatrix::displayText(char* str, byte mode, byte starting_pattern){
 	int16_t size = strlen(str);
 	char** paternToApply = stringToPatterns(str);
-	this->computeBuffer(paternToApply, size, starting_pattern);
-	this->setMode(mode);
+	this->computeBuffer(paternToApply, size, starting_pattern, true);
 	free(paternToApply);
+	this->setMode(mode);
 }
 
 void LedMatrix::displayBannerText(LedMatrix* banner[], char* str, byte mode, int16_t bannerSize){
@@ -146,7 +121,7 @@ void LedMatrix::displayBannerText(LedMatrix* banner[], char* str, byte mode, int
 	0b01101100 01101100 01101100 01101100
 		LED1	LED2      LED3	   LED4
  */
-void LedMatrix::computeBufferBanner(LedMatrix* banner[], int **buffer, int16_t sizeAnim, byte mode, int16_t bannerSize){
+void LedMatrix::computeBufferBanner(LedMatrix* banner[], int **buffer, int16_t sizeAnim, bool progmem, byte mode, int16_t bannerSize){
 	if (bannerSize > 4) return; //NO
 	byte starting_pos = 0;
 	for (int16_t matrixNum = 0; matrixNum < bannerSize; matrixNum++){
@@ -156,11 +131,16 @@ void LedMatrix::computeBufferBanner(LedMatrix* banner[], int **buffer, int16_t s
 			bufferMat[frame] = (char*) malloc(8 * sizeof(char));
 			for (byte row = 0; row < 8; row++){
 				//Pour chaque ligne de chaque frame, on décale le bufferBanner pour avoir un buffer classique
-				bufferMat[frame][row] = (char) ((buffer[frame][row]>>(8-matrixNum*8))&0xFF);
+				if (progmem){
+					bufferMat[frame][row] = (char) ((pgm_read_dword(&(buffer[frame][row]))>>(8-matrixNum*8))&0xFF);
+				}else{
+					bufferMat[frame][row] = (char) ((buffer[frame][row]>>(8-matrixNum*8))&0xFF);
+				}
+
 			}
 		}
 		//On applique la frame
-		banner[matrixNum]->computeBuffer(bufferMat, sizeAnim, starting_pos);
+		banner[matrixNum]->computeBuffer(bufferMat, sizeAnim, starting_pos, false);
 		banner[matrixNum]->setMode(mode);
 		if (mode==SLIDE_MODE)starting_pos++;//Pour appliquer le slide, on décale le début de chaque frame
 		for (int16_t frame = 0; frame < sizeAnim; frame++){free(bufferMat[frame]);}
@@ -269,14 +249,19 @@ void LedMatrix::initMatrix()
 	updateMatrix();
 }
 
-void LedMatrix::computeBuffer(char **buffer, int16_t sizeAnim, byte starting_pattern)
+void LedMatrix::computeBuffer(char **buffer, int16_t sizeAnim, byte starting_pattern, bool progmemBuff)
 {
   //On copie chaque frame de l'anim dans leurs paterns respectifs.
 	_pattern.clearPatterns();
 	int i;
 	for (i = 0; i < NB_PATTERNS_MAX && i <sizeAnim; i++) {
 		for (int j = 0; j < 8; j++) {
-			_pattern._patterns[i][j] = buffer[i][j];
+			if (progmemBuff){
+				_pattern._patterns[i][j] = pgm_read_byte(&(buffer[i][j]));
+			}else{
+				_pattern._patterns[i][j] = buffer[i][j];
+			}
+
 			_pattern._patternWidth[i] = 8;
 		}
 	}

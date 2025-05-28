@@ -6,9 +6,6 @@
 #ifndef IPDISPLAY_H
 #define IPDISPLAY_H
 
-#define IP_MAX_NB 10
-#define IP_MAX_SIZE 20
-#define IP_CHANGE_TIME 2
 
 class Ipdisplay : public PeriodicProcess
 {
@@ -26,11 +23,9 @@ class Ipdisplay : public PeriodicProcess
     byte m_CLOCK;
     byte m_LATCH;
     byte m_disp_number; // Number of the effective 7 seg display
-    char m_ips[IP_MAX_NB][IP_MAX_SIZE];
     float m_acc_time;
     byte m_nb_ips;
     byte m_current_ip;
-    byte m_nb_digits[IP_MAX_NB];
 
     virtual void process(float timestep);
     void display();

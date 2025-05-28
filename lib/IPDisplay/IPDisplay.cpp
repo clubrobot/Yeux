@@ -118,6 +118,7 @@ void Ipdisplay::computeBuffer(char buffer[], byte nbDigits){
 
 void Ipdisplay::displayString(char* str){
 	int size=strlen(str);
+
 	if (str[0]=='.') return; //NO
 	char buffer[12] = {0};
 	int segment = -1;

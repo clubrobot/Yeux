@@ -51,7 +51,7 @@ class LedMatrix : public PeriodicProcess{
     void attach(byte dataPin, byte clockPin, byte latchPin, int rotation);							// Attach a matrix to its pin
 	void updateMatrix();																			// Send data to the registers
 	void initMatrix();																				// Init the matrix data + update data into registers
-	void computeBuffer(char **buffer, int16_t sizeAnim, byte starting_pattern=0);					// Compute Serial input
+	void computeBuffer(char **buffer, int16_t sizeAnim, byte starting_pattern=0, bool progmem=false);					// Compute Serial input
 	void enable();
 	void disable();
 	void update();
@@ -61,7 +61,7 @@ class LedMatrix : public PeriodicProcess{
 	void displayText(char *str, byte mode=SLIDE_MODE, byte starting_pattern=0);
 
 	static void displayBannerText(LedMatrix* banner[], char* str, byte mode=SLIDE_MODE, int16_t bannerSize=4);
-	static void computeBufferBanner(LedMatrix* banner[], int **buffer, int16_t sizeAnim, byte mode=ANIMATION_MODE, int16_t bannerSize=4);
+	static void computeBufferBanner(LedMatrix* banner[], int **buffer, int16_t sizeAnim, bool progmem=false, byte mode=ANIMATION_MODE, int16_t bannerSize=4);
 	static void changeBannerPatternSpeed(LedMatrix* banner[], float timestep, int16_t bannerSize=4);
   private:
 

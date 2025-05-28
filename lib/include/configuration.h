@@ -12,8 +12,8 @@
 
 // Time constants
 
-#define LED_MATRIX_TIMESTEP 2e-4   // Execution step time in s
-#define IP_DISPLAY_TIMESTEP 3e-3    // Execution step time in s
+#define LED_MATRIX_TIMESTEP 1e-4   // Execution step time in s
+#define IP_DISPLAY_TIMESTEP 1e-4    // Execution step time in s
 #define DEFAULT_PATTERN_TIMESTEP 100e-3    // Execution step time in s
 
 
